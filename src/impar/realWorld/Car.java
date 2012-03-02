@@ -1,4 +1,4 @@
-package impar.test;
+package impar.realWorld;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -6,11 +6,11 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Ellipse2D;
 
-import impar.test.Game.KeyType;
-import impar.test.Map.TypeEnum;
-import impar.vision.Point;
-import impar.vision.PointMap;
-import impar.vision.Sonde;
+import impar.pointMap.Point;
+import impar.pointMap.PointMap;
+import impar.pointMap.Sonde;
+import impar.realWorld.Map.TypeEnum;
+import impar.simulation.Game.KeyType;
 
 /** 
  * That class represent the car in the real world. It gathers
@@ -23,33 +23,51 @@ import impar.vision.Sonde;
  */
 public class Car {
 	
-	Map map;
-	PointMap pointMap;
-	VisionCar visionCar;
+	/**
+	 * A practical way to get access to everything that exist.
+	 */
+	private World world;
 	
-	double posX;
-	double posY;
-	double radius = 10;
-	double direction = 0;
-	double speed = 0;
-	double turn = 0;
+	/** The current position of the robot */
+	private double posX;
+	private double posY;
 	
-	double maxSpeed = 0.1;
-	double maxTurn = 0.005;
+	/** The size of the robot */
+	private double radius = 10;
 	
-	double startX;
-	double startY;
+	/** The direction the robot is facing (between 0 and 2*Math.PI) */
+	private double direction = 0;
 	
-	boolean hasMoved = true;
+	/** 
+	 * The current speed of the robot. The speed change when you press
+	 * movement key.
+	 */
+	private double speed = 0;
+	/** Indicate in which direction the robot is currently turning.
+	 *  =0 = Don't turn
+	 *  >0 = Turn left
+	 *  <0 = Turn right
+	 */
+	private double turn = 0;
 	
-	public Car(Map map, PointMap pointMap) {
-		this.map = map;
-		this.pointMap = pointMap;
+	/** The maximum speed at which we can move (in pixel). */
+	private double maxSpeed = 0.1;
+	/** The maximum speed at which we can turn (in radiant).  */
+	private double maxTurn = 0.005;
+	
+	/** The starting position of the robot. */
+	private double startX;
+	private double startY;
+	
+	private boolean hasMoved = true;
+	
+	public Car(World world) {
+		this.world = world;
 		
 		boolean placed = false;
 		for(int i=6; i<16; i++){
 			for(int j = 6; j<16; j++){
-				TypeEnum type = map.get(i, j);
+				TypeEnum type = world.map.get(i, j);
 				if(type == TypeEnum.empty && !placed){
 					posX = i*Map.size + Map.size/2;
 					posY = j*Map.size + Map.size/2;
@@ -60,8 +78,19 @@ public class Car {
 			}
 		}
 		
-		visionCar = new VisionCar(this);
-		pointMap.setVisionCar(visionCar);
+		
+	}
+	
+	public double getPosX(){
+		return posX;
+	}
+	
+	public double getPosY(){
+		return posY;
+	}
+	
+	public double getAngle(){
+		return angle;
 	}
 	
 	public void draw(Graphics2D g){
@@ -81,7 +110,7 @@ public class Car {
 	}
 	
 	public void update(int deltaTime){
-		pointMap.update(deltaTime);
+		
 		//Update position
 		if(turn != 0){
 			hasMoved = true;
@@ -106,7 +135,7 @@ public class Car {
 			double a = 0;
 			Ellipse2D circle = new Ellipse2D.Double(newPosX-radius-a, newPosY-radius-a, (radius+a)*2, (radius+a)*2);
 
-			for(Rectangle rect : map.rectList){
+			for(Rectangle rect : world.map.rectList){
 				if(circle.intersects(rect)){
 					noIntersect = false;
 					break;
@@ -129,7 +158,7 @@ public class Car {
 		//It is also essential for the point to draw at the right place.
 		if(hasMoved || true){
 			Sonde front = new Sonde(posX, posY, direction);
-			Point point = front.send(map.rectList, pointMap.getFogMap(), visionCar);
+			Point point = front.send(world.map.rectList, world.fogMap, visionCar);
 			if(point != null){
 				pointMap.addPoint(new Point(point.x-(int)startX, point.y-(int)startY, point.dist, point.angle+angleImperfection));
 			}

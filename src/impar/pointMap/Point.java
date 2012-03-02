@@ -1,4 +1,4 @@
-package impar.vision;
+package impar.pointMap;
 
 /**
  * A point is something that is gathered by the sonde.
@@ -19,7 +19,7 @@ public class Point {
 	/** How much we think that this point is valid */
 	public int validity = 1; //Indicate the degree of validity of that point. 1 is the lowest value;
 	/** 
-	 * The time at which this point is registered.
+	 * The time at which this point is registered. This is set into the PointMapData.
 	 */
 	public long time = -1;
 	

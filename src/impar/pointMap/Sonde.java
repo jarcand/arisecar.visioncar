@@ -1,24 +1,36 @@
-package impar.vision;
+package impar.pointMap;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
-import impar.test.Map;
-import impar.test.VisionCar;
+import impar.realWorld.Map;
+import impar.realWorld.World;
 
 
 public class Sonde {
 	
-	double x;
-	double y;
-	double angle;
+	/**
+	 * A practical way to get access to everything that exist.
+	 */
+	private World world;
+	
+	/**
+	 * The angle at which this sonde is facing relatively to the angle the front
+	 * of the car is facing.
+	 */
+	double relativeAngle;
+	/**
+	 * The speed at which the sonde is traveling. That is just a simplication used
+	 * for simulation. It is easier to detect object by just moving the sonde in 
+	 * small step than to create a line and see if things intersect that line and 
+	 * in which order they intersect it.
+	 */
 	double speed = 1;
 	
 	
-	public Sonde(double x, double y, double angle){
-		this.x = x;
-		this.y = y;
-		this.angle = angle;
+	public Sonde(World world, double angle){
+		this.world = world;
+		this.relativeAngle = angle;
 	}
 	
 	public Point send(ArrayList<Rectangle> rectList, FogMap fogMap, VisionCar visionCar){
@@ -26,6 +38,10 @@ public class Sonde {
 		double maxDist = 100;
 		double imperfection = 0.50;
 		double dist = 0;
+		
+		double x = world.car.getPosX();
+		double y = world.car.getPosY();
+		double angle = world.car.getAngle() + relativeAngle;
 		
 		boolean collide = false;
 		while(!collide){
@@ -76,7 +92,7 @@ public class Sonde {
 		double imparValue = (imperfection * Math.random()) + (1-imperfection/2);
 		double imparDist = dist*imparValue;
 		
-		return (new Point((int)x, (int)y, imparDist, angle));
+		return (new Point((int)x, (int)y, imparDist, relativeAngle));
 	}
 
 }

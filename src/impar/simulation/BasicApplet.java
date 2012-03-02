@@ -1,4 +1,4 @@
-package impar.test;
+package impar.simulation;
 
 import java.applet.Applet;
 import java.awt.Canvas;
@@ -8,7 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.image.BufferStrategy;
 
-import impar.test.Game.KeyType;
+import impar.simulation.Game.KeyType;
 
 
 public class BasicApplet extends Applet implements Runnable{

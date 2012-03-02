@@ -1,4 +1,6 @@
-package impar.test;
+package impar.simulation;
+
+import impar.realWorld.World;
 
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -22,6 +24,7 @@ public class Game {
 	}
 	
 	public void update(int deltaTime){
+		world.pointMap.update(deltaTime);
 		world.car.update(deltaTime);
 	}
 	

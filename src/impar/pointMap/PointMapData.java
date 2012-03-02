@@ -1,4 +1,4 @@
-package impar.vision;
+package impar.pointMap;
 
 import java.util.ArrayList;
 
@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * @author Gudradain
  *
  */
-public class GeneralMap {
+public class PointMapData {
 	
 	public static int MinimumValidity = 10;
 	public static int MinimumCollision = 100;
