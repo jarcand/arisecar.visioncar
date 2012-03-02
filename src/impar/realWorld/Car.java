@@ -5,9 +5,9 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Ellipse2D;
+import java.util.ArrayList;
 
 import impar.pointMap.Point;
-import impar.pointMap.PointMap;
 import impar.pointMap.Sonde;
 import impar.realWorld.Map.TypeEnum;
 import impar.simulation.Game.KeyType;
@@ -61,6 +61,8 @@ public class Car {
 	
 	private boolean hasMoved = true;
 	
+	private ArrayList<Sonde> sondeList = new ArrayList<Sonde>();
+	
 	public Car(World world) {
 		this.world = world;
 		
@@ -78,6 +80,21 @@ public class Car {
 			}
 		}
 		
+		Sonde sonde = new Sonde(world, 0);
+		sondeList.add(sonde);
+		sonde = new Sonde(world, Math.PI/2);
+		sondeList.add(sonde);
+		sonde = new Sonde(world, -Math.PI/2);
+		sondeList.add(sonde);
+		sonde = new Sonde(world, Math.PI/6);
+		sondeList.add(sonde);
+		sonde = new Sonde(world, -Math.PI/6);
+		sondeList.add(sonde);
+		sonde = new Sonde(world, Math.PI/3);
+		sondeList.add(sonde);
+		sonde = new Sonde(world, -Math.PI/3);
+		sondeList.add(sonde);
+		
 		
 	}
 	
@@ -90,7 +107,19 @@ public class Car {
 	}
 	
 	public double getAngle(){
-		return angle;
+		return direction;
+	}
+	
+	public double getStartX(){
+		return startX;
+	}
+	
+	public double getStartY(){
+		return startY;
+	}
+	
+	public double getRadius(){
+		return radius;
 	}
 	
 	public void draw(Graphics2D g){
@@ -135,7 +164,7 @@ public class Car {
 			double a = 0;
 			Ellipse2D circle = new Ellipse2D.Double(newPosX-radius-a, newPosY-radius-a, (radius+a)*2, (radius+a)*2);
 
-			for(Rectangle rect : world.map.rectList){
+			for(Rectangle rect : world.map.getRectList()){
 				if(circle.intersects(rect)){
 					noIntersect = false;
 					break;
@@ -157,46 +186,16 @@ public class Car {
 		//but for our algorithm it's easier if we consider he is so we must  deduce the startX and startY for every point
 		//It is also essential for the point to draw at the right place.
 		if(hasMoved || true){
-			Sonde front = new Sonde(posX, posY, direction);
-			Point point = front.send(world.map.rectList, world.fogMap, visionCar);
-			if(point != null){
-				pointMap.addPoint(new Point(point.x-(int)startX, point.y-(int)startY, point.dist, point.angle+angleImperfection));
+			for(Sonde sonde : sondeList){
+				Point point = sonde.send();
+				if(point != null){
+					world.pointMap.addPoint(new Point(point.x-(int)startX, point.y-(int)startY, point.dist, point.angle+angleImperfection));
+				}
 			}
-			Sonde left = new Sonde(posX, posY, direction + Math.PI/2);
-			point = left.send(map.rectList, pointMap.getFogMap(), visionCar);
-			if(point != null){
-				pointMap.addPoint(new Point(point.x-(int)startX, point.y-(int)startY, point.dist, point.angle+angleImperfection));
-			}
-			Sonde right = new Sonde(posX, posY, direction - Math.PI/2);
-			point = right.send(map.rectList, pointMap.getFogMap(), visionCar);
-			if(point != null){
-				pointMap.addPoint(new Point(point.x-(int)startX, point.y-(int)startY, point.dist, point.angle+angleImperfection));
-			}
-			Sonde left2 = new Sonde(posX, posY, direction + Math.PI*(1.0/6));
-			point = left2.send(map.rectList, pointMap.getFogMap(), visionCar);
-			if(point != null){
-				pointMap.addPoint(new Point(point.x-(int)startX, point.y-(int)startY, point.dist, point.angle+angleImperfection));
-			}
-			Sonde right2 = new Sonde(posX, posY, direction - Math.PI*(1.0/6));
-			point = right2.send(map.rectList, pointMap.getFogMap(), visionCar);
-			if(point != null){
-				pointMap.addPoint(new Point(point.x-(int)startX, point.y-(int)startY, point.dist, point.angle+angleImperfection));
-			}
-			Sonde left3 = new Sonde(posX, posY, direction + Math.PI*(2.0/6));
-			point = left3.send(map.rectList, pointMap.getFogMap(), visionCar);
-			if(point != null){
-				pointMap.addPoint(new Point(point.x-(int)startX, point.y-(int)startY, point.dist, point.angle+angleImperfection));
-			}
-			Sonde right3 = new Sonde(posX, posY, direction - Math.PI*(2.0/6));
-			point = right3.send(map.rectList, pointMap.getFogMap(), visionCar);
-			if(point != null){
-				pointMap.addPoint(new Point(point.x-(int)startX, point.y-(int)startY, point.dist, point.angle+angleImperfection));
-			}
-			
 		}
 		
 		//Create pos
-		pointMap.addPos(new Point((int)(posX-startX), (int)(posY-startY), 0, 0));
+		world.pointMap.addPos(new Point((int)(posX-startX), (int)(posY-startY), 0, 0));
 		hasMoved = false;
 	}
 	

@@ -38,22 +38,22 @@ public class Map {
 	/**
 	 * The size of 1 square.
 	 */
-	public static int size = 40;
+	public static final int size = 40;
 	/** 
 	 * The number of square 
 	 */
-	public static int number = 16;
+	public static final int number = 16;
 	
 	/**
 	 * That's the map of all our square
 	 */
-	TypeEnum [][] map = new TypeEnum[number][number];
+	private TypeEnum [][] map = new TypeEnum[number][number];
 	
 	/**
 	 * This list is used to do detection. It is built into the
 	 * constructor.
 	 */
-	ArrayList<Rectangle> rectList = new ArrayList<Rectangle>();
+	private ArrayList<Rectangle> rectList = new ArrayList<Rectangle>();
 	
 	/**
 	 * It construct the maps
@@ -86,6 +86,16 @@ public class Map {
 	 */
 	public TypeEnum get(int x, int y){
 		return map[x][y];
+	}
+	
+	/**
+	 * Return the list of all the rectangle representing walls.
+	 * This is used by the Sondes to determine where there is a wall.
+	 * 
+	 * @return
+	 */
+	public ArrayList<Rectangle> getRectList(){
+		return rectList;
 	}
 	
 	/**

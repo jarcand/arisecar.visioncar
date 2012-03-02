@@ -26,36 +26,37 @@ public class VisionCar {
 	 */
 	private World world;
 	
-	/**
-	 * Indicate the starting position of the "real" car in the "real" map. Well 
-	 * in fact it is the reverse but who care.
-	 * 
-	 * This data is just used for drawing.
-	 */
-	private double difPosX;
-	private double difPosY;
-	
 	public VisionCar(World world){
 		this.world = world;
-		difPosX = -world.car.posX;
-		difPosY = -world.car.posY;
+	}
+	
+	public double getPosX(){
+		return world.car.getPosX()-world.car.getStartX();
+	}
+	
+	public double getPosY(){
+		return world.car.getPosY()-world.car.getStartY();
+	}
+	
+	public double getRadius(){
+		return world.car.getRadius();
 	}
 	
 	public void draw(Graphics2D g){
 		g.setStroke(new BasicStroke(1));
 		
 		g.setColor(Color.blue);
-		int x = (int) (world.car.posX+difPosX-world.car.radius);
-		int y= (int) (world.car.posY+difPosY-world.car.radius);
-		int width = (int) (world.car.radius*2);
-		int height = (int) (world.car.radius*2);
+		int x = (int) (getPosX()-getRadius());
+		int y= (int) (getPosY()-getRadius());
+		int width = (int) (getRadius()*2);
+		int height = (int) (getRadius()*2);
 		g.fillOval(x, y, width, height);
 		
-		g.setColor(Color.red);
-		x = (int) (world.car.posX+difPosX);
-		y = (int) (world.car.posY+difPosY);
-		int dirX = (int) (world.car.radius*Math.cos(world.car.direction));
-		int dirY = (int) (world.car.radius*Math.sin(world.car.direction));
+		g.setColor(Color.pink);
+		x = (int) (getPosX());
+		y = (int) (getPosY());
+		int dirX = (int) (getRadius()*Math.cos(world.car.getAngle()));
+		int dirY = (int) (getRadius()*Math.sin(world.car.getAngle()));
 		g.drawLine(x, y, x+dirX, y+dirY);
 	}
 

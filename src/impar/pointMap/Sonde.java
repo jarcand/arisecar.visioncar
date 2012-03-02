@@ -33,11 +33,14 @@ public class Sonde {
 		this.relativeAngle = angle;
 	}
 	
-	public Point send(ArrayList<Rectangle> rectList, FogMap fogMap, VisionCar visionCar){
+	public Point send(){
 
 		double maxDist = 100;
 		double imperfection = 0.50;
 		double dist = 0;
+		
+		ArrayList<Rectangle> rectList = world.map.getRectList();
+		FogMap fogMap = world.fogMap;
 		
 		double x = world.car.getPosX();
 		double y = world.car.getPosY();
@@ -66,8 +69,8 @@ public class Sonde {
 			
 			//Fog discovery
 			if(!collide){
-				double fogX = nx+visionCar.difPosX;
-				double fogY = ny+visionCar.difPosY;
+				double fogX = nx-world.car.getStartX();
+				double fogY = ny-world.car.getStartY();
 				
 				
 				
@@ -92,7 +95,7 @@ public class Sonde {
 		double imparValue = (imperfection * Math.random()) + (1-imperfection/2);
 		double imparDist = dist*imparValue;
 		
-		return (new Point((int)x, (int)y, imparDist, relativeAngle));
+		return (new Point((int)x, (int)y, imparDist, angle));
 	}
 
 }
