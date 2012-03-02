@@ -179,6 +179,10 @@ public class Car {
 			hasMoved = true;
 		}
 		
+		Point pointFront = null;
+		Point pointLeft = null;
+		Point pointRight = null;
+		
 		double angleImperfection = 0*(2*Math.PI)*(1.0/20);
 		//Create point
 		//Only create a point if the car has moved since we last recorded a point
@@ -188,11 +192,20 @@ public class Car {
 		if(hasMoved || true){
 			for(Sonde sonde : sondeList){
 				Point point = sonde.send();
+				if(sonde.getAngle()-Math.PI/2 < 0.001){
+					pointRight = point;
+				}else if(sonde.getAngle() < 0.001){
+					pointFront = point;
+				}else if(sonde.getAngle()+Math.PI/2 < 0.001){
+					pointLeft = point;
+				}
 				if(point != null){
 					world.pointMap.addPoint(new Point(point.x-(int)startX, point.y-(int)startY, point.dist, point.angle+angleImperfection));
 				}
 			}
 		}
+		
+		exploreMap(pointFront, pointLeft, pointRight);
 		
 		//Create pos
 		world.pointMap.addPos(new Point((int)(posX-startX), (int)(posY-startY), 0, 0));
@@ -227,5 +240,46 @@ public class Car {
 		}
 		
 	}
+	
+	public void exploreMap(Point pointFront, Point pointLeft, Point pointRight){
+
+		
+		if (pointLeft != null && pointRight == null && pointFront != null){
+			speed = 0;
+			turn = -maxTurn;
+		}
+		else if (pointLeft == null && pointRight != null && pointFront != null){
+			speed = 0;
+			turn = maxTurn;
+		}
+		else if (pointRight!=null && pointLeft!=null && pointFront!=null){
+			speed = 0;
+			turn = maxTurn;
+		}
+		else if(pointFront==null && pointRight==null && pointLeft==null){	
+			turn = 0;
+			speed=maxSpeed;
+		}
+/*		else if (pointFront!=null)
+		{
+			if (pointMap.getFogMap().getUnknown(pointleft.x, pointleft.y))
+			{
+				turn = maxTurn;
+			}
+			else if (pointMap.getFogMap().getUnknown(pointright.x, pointright.y))
+			{
+				turn = -maxTurn;
+			}
+			else
+			{
+				turn = maxTurn;
+			}
+		}*/
+		else{
+			speed=maxSpeed;
+		}
+
+	}
+
 
 }

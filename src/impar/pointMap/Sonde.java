@@ -33,6 +33,10 @@ public class Sonde {
 		this.relativeAngle = angle;
 	}
 	
+	public double getAngle(){
+		return relativeAngle;
+	}
+	
 	public Point send(){
 
 		double maxDist = 100;
