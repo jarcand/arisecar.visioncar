@@ -205,7 +205,7 @@ public class Car {
 			}
 		}
 		
-		exploreMap(pointFront, pointLeft, pointRight);
+		//exploreMap(pointFront, pointLeft, pointRight);
 		
 		//Create pos
 		world.pointMap.addPos(new Point((int)(posX-startX), (int)(posY-startY), 0, 0));
@@ -238,7 +238,6 @@ public class Car {
 				break;
 			}
 		}
-		
 	}
 	
 	public void exploreMap(Point pointFront, Point pointLeft, Point pointRight){
