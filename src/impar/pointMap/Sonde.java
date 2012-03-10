@@ -40,7 +40,7 @@ public class Sonde {
 	public Point send(){
 
 		double maxDist = 100;
-		double imperfection = 0.50;
+		double imperfection = 0.00;
 		double dist = 0;
 		
 		ArrayList<Rectangle> rectList = world.map.getRectList();
