@@ -30,6 +30,8 @@ public class PointMap {
 	
 	private ArrayList<Point> posList = new ArrayList<Point>();
 	
+	private ArrayList<Point> tempPointList = new ArrayList<Point>();
+	
 	private PointMapData pointData = new PointMapData();
 	
 	public PointMap(World world){
@@ -40,7 +42,7 @@ public class PointMap {
 		
 		//Move the point map to the side of the ''real'' map.
 		//Since the car initially think he is at position 0, we want to begin the drawing in the middle.
-		g.translate(660*1.5, 660*0.5);
+		g.translate(660*0.5, 660*0.5);
 		
 		//Draw fog of war
 		world.fogMap.draw(g);
@@ -90,7 +92,7 @@ public class PointMap {
 	 * @param point
 	 */
 	public void addPoint(Point point){
-		pointData.add(point);
+		tempPointList.add(point);
 	}
 	
 	/**
@@ -98,7 +100,7 @@ public class PointMap {
 	 * 
 	 * @param point
 	 */
-	public void addPos(Point point){
+	public synchronized void addPos(Point point){
 		posList.add(point);
 	}
 	
@@ -112,7 +114,11 @@ public class PointMap {
 	 * 
 	 * @param deltaTime
 	 */
-	public void update(int deltaTime){
+	public synchronized void update(int deltaTime){
+		while(tempPointList.size() > 0){
+			Point point = tempPointList.remove(0);
+			pointData.add(point);
+		}
 		pointData.update(deltaTime);
 	}
 

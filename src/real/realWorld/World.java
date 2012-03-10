@@ -1,6 +1,11 @@
 package real.realWorld;
 
+import ca.ariselab.devices.serial.LocoArduino;
+import ca.ariselab.lib.serialdevices.SerialDeviceID;
+import ca.ariselab.lib.serialdevices.SerialDeviceInitException;
+import ca.ariselab.lib.serialdevices.SerialPortMgmt;
 import real.pointMap.FogMap;
+import real.pointMap.Point;
 import real.pointMap.PointMap;
 import real.pointMap.VisionCar;
 
@@ -35,10 +40,39 @@ public class World {
 	public final VisionCar visionCar;
 	public final FogMap fogMap;
 	
+	public LocoArduino locoArduino;
+	
 	public World(){
 		pointMap = new PointMap(this);
 		visionCar = new VisionCar(this);
 		fogMap = new FogMap(this);
+		
+		SerialPortMgmt.listSerialPorts();
+		
+		try {
+			locoArduino = new LocoArduino(new SerialDeviceID(0x70)) {
+				public void inputsUpdated() {
+					double pointFront = getRangeFinder2();
+					double pointLeft = getRangeFinder3();
+					double pointRight = getRangeFinder1();
+					
+					double angle = visionCar.getAngle();
+					
+					Point front = new Point(0, 0, pointFront, angle+0);
+					Point left = new Point(0, 0, pointLeft, angle+Math.PI/6);
+					Point right = new Point(0, 0, pointRight, angle-Math.PI/6);
+					
+					    
+					pointMap.addPoint(front);
+					pointMap.addPoint(left);
+					pointMap.addPoint(right);
+					
+					
+				}
+			};
+		} catch (SerialDeviceInitException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
