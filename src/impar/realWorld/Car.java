@@ -296,40 +296,46 @@ public class Car {
 		}
 		else if (testPoint (pointLeft2, 30) && testPoint(pointRight2, 99) && !testPoint (pointFront, 30)){
 			speed=maxSpeed;
+			return ("left, right?");
 		}
 		else if (testPoint (pointRight2,  30) && testPoint(pointLeft2, 99) && !testPoint (pointFront,  30)){
 			speed=maxSpeed;
+			return ("right, left?");
 		}
 
 		else if (testPoint (pointLeft2,  30) && testPoint (pointFront,  30) && testPoint(pointRight2, 99)){
-			System.out.println("left,front, right? ");
+			System.out.println ("left,front, right?");
 			speed = 0;
 			turn = maxTurn;
 			inTurn = true;
 			angleToTurn = Math.PI/2;
+			return ("left,front, right?");
 		}
 
 		else if (testPoint(pointRight2,  30) && testPoint(pointFront, 30) && testPoint (pointLeft2, 99)){	
-			System.out.println("right,front, left? " );
+			System.out.println("right,front, left?" );
 			speed = 0;
 			turn = -maxTurn;
 			inTurn = true;
 			angleToTurn = Math.PI/2;
+			return("right,front, left?" );
 		}
 		else if (testPoint(pointRight2,  30) &&  !testPoint (pointLeft2, 30) && testPoint(pointFront,  30)){	
-			System.out.println("right,front " );
+			System.out.println("right,front");
 			speed = 0;
 			turn = -maxTurn;
 			inTurn = true;
 			angleToTurn = Math.PI/2;
+			return("right,front");
 		}
 
 		else if (testPoint (pointLeft2,  30) && !testPoint (pointRight2, 30) && testPoint (pointFront,  30)){
-			System.out.println("left,front " );
+			System.out.println("left,front" );
 			speed = 0;
 			turn = maxTurn;
 			inTurn = true;
 			angleToTurn = Math.PI/2;
+			return("left,front" );
 		}
 
 
@@ -340,6 +346,7 @@ public class Car {
 			turn = -maxTurn;
 			inTurn = true;
 			angleToTurn = Math.PI;
+			return("dead end");
 		}
 
 		else if (testPoint (pointFront,  30))
@@ -348,10 +355,11 @@ public class Car {
 		turn = -maxTurn;
 		inTurn = true;
 		angleToTurn = Math.PI/2;
+		return("front");
 		}
 
 		else if(!testPoint(pointFront,  30) && !testPoint(pointRight2,  30) && !testPoint(pointLeft2,  30)){
-			System.out.println("allclear");
+			System.out.println("corridor");
 			turn = 0;
 			speed=maxSpeed;
 	/*		if (testPoint (pointLeft2, 30) || testPoint (pointLeft, 40))
@@ -362,6 +370,7 @@ public class Car {
 			{
 				turn = -maxTurn;
 			}*/
+			return("corridor");
 		}
 		else
 		{
@@ -369,6 +378,7 @@ public class Car {
 			System.out.println(testPoint(pointLeft2, 30) + " " + testPoint(pointFront, 30) + " " + testPoint(pointRight, 30));
 			turn = 0;
 			speed= maxSpeed;
+			return ("unknown");
 		}
 
 
