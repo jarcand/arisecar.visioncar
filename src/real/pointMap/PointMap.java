@@ -77,7 +77,7 @@ public class PointMap {
 		//Draw path
 		g.setColor(Color.orange);
 		for(Point point : posList){
-			//g.drawLine(point.x, point.y, point.x+1, point.y);
+			g.drawLine(point.x, point.y, point.x+1, point.y);
 		}
 		
 		//Draw car
@@ -91,7 +91,7 @@ public class PointMap {
 	 * 
 	 * @param point
 	 */
-	public void addPoint(Point point){
+	public synchronized void addPoint(Point point){
 		tempPointList.add(point);
 	}
 	
@@ -100,7 +100,7 @@ public class PointMap {
 	 * 
 	 * @param point
 	 */
-	public synchronized void addPos(Point point){
+	public void addPos(Point point){
 		posList.add(point);
 	}
 	
