@@ -9,6 +9,10 @@ import impar.realWorld.World;
 
 public class Sonde {
 	
+	public enum SondePos {
+		Front, Right, Left, Right2, Left2, None;
+	}
+	
 	/**
 	 * A practical way to get access to everything that exist.
 	 */
@@ -26,21 +30,30 @@ public class Sonde {
 	 * in which order they intersect it.
 	 */
 	double speed = 1;
+	/**
+	 * Indicate the position of this sensor on the car.
+	 */
+	SondePos pos;
 	
 	
-	public Sonde(World world, double angle){
+	public Sonde(World world, double angle, SondePos pos){
 		this.world = world;
 		this.relativeAngle = angle;
+		this.pos = pos;
 	}
 	
 	public double getAngle(){
 		return relativeAngle;
 	}
 	
+	public SondePos getPos(){
+		return pos;
+	}
+	
 	public Point send(){
 
 		double maxDist = 100;
-		double imperfection = 0.00;
+		double imperfection = 0.50;
 		double dist = 0;
 		
 		ArrayList<Rectangle> rectList = world.map.getRectList();
