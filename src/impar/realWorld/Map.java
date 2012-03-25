@@ -3,6 +3,14 @@ package impar.realWorld;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 /**
@@ -22,6 +30,7 @@ import java.util.ArrayList;
  *
  */
 public class Map {
+
 	
 	/**
 	 * A practical way to get access to everything that exist.
@@ -48,33 +57,71 @@ public class Map {
 	 * That's the map of all our square
 	 */
 	private TypeEnum [][] map = new TypeEnum[number][number];
-	
 	/**
 	 * This list is used to do detection. It is built into the
 	 * constructor.
 	 */
 	private ArrayList<Rectangle> rectList = new ArrayList<Rectangle>();
-	
 	/**
 	 * It construct the maps
 	 * 
 	 * @param world
 	 */
+	
+	/**
+	 * directory and file name to access static maps
+	 */
+	//private String directory = "mapFile\\";
+	//private String filename = "mapfile";
+	//File file = new File (directory);
+	
 	public Map(World world) {
-		this.world = world;
-		for(int i=0; i<number; i++){
-			for(int j=0; j<number; j++){
-				if(Math.random() < 0.30){
-					map[i][j] = TypeEnum.wall;
-					Rectangle rect = new Rectangle(i*size, j*size, size, size);
-					rectList.add(rect);
-				}else{
-					map[i][j] = TypeEnum.empty;
+		try{
+			int i =0;
+			 FileOutputStream fos = new FileOutputStream("mapfile.txt");
+			   OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8");
+			   out.write("This is the output file");
+			//FileInputStream fstream = new FileInputStream(directory + "\\" + filename);
+			//DataInputStream in = new DataInputStream(fstream);
+			//BufferedReader br = new BufferedReader (new InputStreamReader(in));
+			BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Bao Dang\\git\\arisecar.visioncar\\mapfile.txt"));
+			String strLine;
+
+			while ((strLine = br.readLine()) != null && i <=number)   {
+				char []mapLine = strLine.toCharArray();
+				for (int j=0; j<= number; j++)
+				{
+					if (mapLine[j] == '#'){
+						map[i][j] = TypeEnum.wall;
+						i++;
+					}
+					else{
+						map[i][j] = TypeEnum.empty;
+						i++;
+					}
+						
+				}
+			}
+			//Close the input stream
+			//in.close();
+
+		}catch (Exception e){//Catch exception if any
+			System.err.println("No preloaded map " + e.getMessage());
+			this.world = world;
+			for(int i=0; i<number; i++){
+				for(int j=0; j<number; j++){
+					if(Math.random() < 0.30){
+						map[i][j] = TypeEnum.wall;
+						Rectangle rect = new Rectangle(i*size, j*size, size, size);
+						rectList.add(rect);
+					}else{
+						map[i][j] = TypeEnum.empty;
+					}
 				}
 			}
 		}
+
 	}
-	
 	/**
 	 * Return the value at that position in the map.
 	 * This is used by the car to determine where to be placed
