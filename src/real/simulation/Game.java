@@ -24,6 +24,7 @@ public class Game {
 	
 	public void update(int deltaTime){
 		world.pointMap.update(deltaTime);
+		world.visionCar.update(deltaTime);
 	}
 	
 	public void keyEvent(KeyEvent e, KeyType type){

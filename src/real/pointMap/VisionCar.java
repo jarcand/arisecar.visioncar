@@ -68,5 +68,20 @@ public class VisionCar {
 		int dirY = (int) (getRadius()*Math.sin(getAngle()));
 		g.drawLine(x, y, x+dirX, y+dirY);
 	}
+	
+	public void update(int deltaTime){
+		double m1v = (world.locoArduino.getMotor1SetPoint() - 1500) / 450.0 * 92 / 60 * 102.8;
+		double m2v = (world.locoArduino.getMotor2SetPoint() - 1500) / 450.0 * 97 / 60 * 102.6;
+		double dist = (m1v + m2v) / 2.0 / 1000 * deltaTime; 
+		double rot = (m1v - m2v) / 2.0 * (2 * Math.PI) / 171.2 / 1000 * deltaTime;
+		
+		angle += rot;
+		posX += Math.cos(angle) * dist;
+		posY += Math.sin(angle) * dist;
+		
+		world.pointMap.addPos(new Point((int)posX, (int)posY, 0, 0));
+		
+//		System.out.println("dist:" + dist + "; rot: " + rot);
+	}
 
 }

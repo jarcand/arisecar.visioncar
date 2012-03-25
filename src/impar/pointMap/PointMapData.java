@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class PointMapData {
 	
-	public static int MinimumValidity = 10;
+	public static int MinimumValidity = 21;
 	public static int MinimumCollision = 100;
 	private double validityDist = 50;
 	
@@ -21,7 +21,7 @@ public class PointMapData {
 	public long time = 0; //In milliseconds
 	long timeBetweenCleanUp = 100; //In milliseconds
 	long timeBeforeNextCleanUp = timeBetweenCleanUp;
-	long timeSurvive = 2000; //In milliseconds
+	long timeSurvive = 3000; //In milliseconds
 	
 	/**
 	 * Define the angle in which we put point together. For example if we set
@@ -126,10 +126,10 @@ public class PointMapData {
 			//Add the point to the map generation
 			int validity = 1;
 			if(point.dist < validityDist){
-				validity += 1;
+				validity += 2;
 			}
 			if(point.dist < validityDist/2){
-				validity += 1;
+				validity += 4;
 			}
 			double dist = point.dist*validity;
 			for(int i=0; i<pointList.size(); i++){

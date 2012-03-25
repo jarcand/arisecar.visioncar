@@ -9,8 +9,10 @@ import java.util.ArrayList;
 
 import impar.pointMap.Point;
 import impar.pointMap.Sonde;
+import impar.pointMap.Sonde.SondePos;
 import impar.realWorld.Map.TypeEnum;
 import impar.simulation.Game.KeyType;
+import java.util.Random;
 
 /** 
  * That class represent the car in the real world. It gathers
@@ -22,22 +24,22 @@ import impar.simulation.Game.KeyType;
  *
  */
 public class Car {
-	
+
 	/**
 	 * A practical way to get access to everything that exist.
 	 */
 	private World world;
-	
+
 	/** The current position of the robot */
 	private double posX;
 	private double posY;
-	
+
 	/** The size of the robot */
 	private double radius = 10;
-	
+
 	/** The direction the robot is facing (between 0 and 2*Math.PI) */
 	private double direction = 0;
-	
+
 	/** 
 	 * The current speed of the robot. The speed change when you press
 	 * movement key.
@@ -49,23 +51,30 @@ public class Car {
 	 *  <0 = Turn right
 	 */
 	private double turn = 0;
-	
+
 	/** The maximum speed at which we can move (in pixel). */
 	private double maxSpeed = 0.1;
 	/** The maximum speed at which we can turn (in radiant).  */
 	private double maxTurn = 0.005;
-	
+
 	/** The starting position of the robot. */
 	private double startX;
 	private double startY;
-	
+
 	private boolean hasMoved = true;
-	
+
 	private ArrayList<Sonde> sondeList = new ArrayList<Sonde>();
-	
+
+	private Random generator = new Random();
+
+	private boolean explore = false;
+
+	private boolean inTurn = false;
+	private double angleToTurn = 0;
+
 	public Car(World world) {
 		this.world = world;
-		
+
 		boolean placed = false;
 		for(int i=6; i<16; i++){
 			for(int j = 6; j<16; j++){
@@ -79,49 +88,49 @@ public class Car {
 				}
 			}
 		}
-		
-		Sonde sonde = new Sonde(world, 0);
+
+		Sonde sonde = new Sonde(world, 0, SondePos.Front);
 		sondeList.add(sonde);
-		sonde = new Sonde(world, Math.PI/2);
+		sonde = new Sonde(world, Math.PI/2, SondePos.Left2);
 		sondeList.add(sonde);
-		sonde = new Sonde(world, -Math.PI/2);
+		sonde = new Sonde(world, -Math.PI/2, SondePos.Right2);
 		sondeList.add(sonde);
-		sonde = new Sonde(world, Math.PI/6);
+		sonde = new Sonde(world, Math.PI/6, SondePos.Left);
 		sondeList.add(sonde);
-		sonde = new Sonde(world, -Math.PI/6);
+		sonde = new Sonde(world, -Math.PI/6, SondePos.Right);
 		sondeList.add(sonde);
-		sonde = new Sonde(world, Math.PI/3);
+		sonde = new Sonde(world, Math.PI/3, SondePos.None);
 		sondeList.add(sonde);
-		sonde = new Sonde(world, -Math.PI/3);
+		sonde = new Sonde(world, -Math.PI/3, SondePos.None);
 		sondeList.add(sonde);
-		
-		
+
+
 	}
-	
+
 	public double getPosX(){
 		return posX;
 	}
-	
+
 	public double getPosY(){
 		return posY;
 	}
-	
+
 	public double getAngle(){
 		return direction;
 	}
-	
+
 	public double getStartX(){
 		return startX;
 	}
-	
+
 	public double getStartY(){
 		return startY;
 	}
-	
+
 	public double getRadius(){
 		return radius;
 	}
-	
+
 	public void draw(Graphics2D g){
 		g.setColor(Color.blue);
 		int x = (int) (posX-radius);
@@ -129,7 +138,7 @@ public class Car {
 		int width = (int) (radius*2);
 		int height = (int) (radius*2);
 		g.fillOval(x, y, width, height);
-		
+
 		g.setColor(Color.red);
 		x = (int) posX;
 		y = (int) posY;
@@ -137,9 +146,16 @@ public class Car {
 		int dirY = (int) (radius*Math.sin(direction));
 		g.drawLine(x, y, x+dirX, y+dirY);
 	}
-	
+
 	public void update(int deltaTime){
-		
+
+		if(inTurn){
+			angleToTurn -= Math.abs(turn)*deltaTime;
+			if(angleToTurn < 0){
+				inTurn = false;
+			}
+		}
+
 		//Update position
 		if(turn != 0){
 			hasMoved = true;
@@ -148,7 +164,7 @@ public class Car {
 		double dist = speed*deltaTime;
 		double newPosX = posX + dist * Math.cos(direction);
 		double newPosY = posY + dist * Math.sin(direction);
-		
+
 		//Keep inside
 		boolean keepInside = false;
 		if (newPosX - radius < 0 
@@ -171,18 +187,20 @@ public class Car {
 				}
 			}	
 		}
-		
+
 		//Validate position
 		if(noIntersect && !keepInside && speed != 0){
 			posX = newPosX;
 			posY = newPosY;
 			hasMoved = true;
 		}
-		
+
 		Point pointFront = null;
 		Point pointLeft = null;
 		Point pointRight = null;
-		
+		Point pointLeft2 = null;
+		Point pointRight2 = null;
+
 		double angleImperfection = 0*(2*Math.PI)*(1.0/20);
 		//Create point
 		//Only create a point if the car has moved since we last recorded a point
@@ -190,95 +208,294 @@ public class Car {
 		//but for our algorithm it's easier if we consider he is so we must  deduce the startX and startY for every point
 		//It is also essential for the point to draw at the right place.
 		if(hasMoved || true){
-			for(Sonde sonde : sondeList){
-				Point point = sonde.send();
-				if(sonde.getAngle()-Math.PI/2 < 0.001){
-					pointRight = point;
-				}else if(sonde.getAngle() < 0.001){
-					pointFront = point;
-				}else if(sonde.getAngle()+Math.PI/2 < 0.001){
-					pointLeft = point;
-				}
-				if(point != null){
-					world.pointMap.addPoint(new Point(point.x-(int)startX, point.y-(int)startY, point.dist, point.angle+angleImperfection));
+			for(int i=0; i<3; i++){
+				for(Sonde sonde : sondeList){
+					Point point = sonde.send();
+					if(sonde.getPos() == SondePos.Right){
+						pointRight = point;
+						/*					if (pointRight != null)
+					System.out.println("right point " + pointRight.x + " " + pointRight.y);*/
+					}if (sonde.getPos() == SondePos.Right2){
+						pointRight2 = point;				
+					}if(sonde.getPos() == SondePos.Front){
+						pointFront = point;
+						/*					if (pointFront != null)
+					System.out.println("front point " + pointFront.x + " " + pointFront.y);*/
+					}if(sonde.getPos() == SondePos.Left){
+						pointLeft = point;
+						/*if (pointLeft != null)
+					System.out.println("left point " + pointLeft.x + " " + pointLeft.y);*/
+					}if (sonde.getPos() == SondePos.Left2){
+						pointLeft2 = point;
+					}
+
+					if(point != null){
+						world.pointMap.addPoint(new Point(point.x-(int)startX, point.y-(int)startY, point.dist, point.angle+angleImperfection));
+					}
 				}
 			}
 		}
-		
-		//exploreMap(pointFront, pointLeft, pointRight);
-		
+
+		if (explore && !inTurn){
+			exploreMap2(pointFront, pointLeft, pointRight, pointRight2, pointLeft2);
+		}
+
+
 		//Create pos
 		world.pointMap.addPos(new Point((int)(posX-startX), (int)(posY-startY), 0, 0));
 		hasMoved = false;
 	}
-	
+
 	public void keyEvent(KeyEvent e, KeyType type){
 		if(type == KeyType.Pressed){
 			switch(e.getKeyCode()){
 			case(KeyEvent.VK_W):
 				speed = maxSpeed;
-				break;
+				
+			break;
 			case(KeyEvent.VK_A):
 				turn = -maxTurn;
-				break;
+			break;
 			case(KeyEvent.VK_D):
 				turn = maxTurn;
-				break;
+			break;
+			case (KeyEvent.VK_SPACE):
+			{
+				speed = 0;
+				turn = 0;
+				explore = !explore;
+			}
 			}
 		}else if(type == KeyType.Released){
 			switch(e.getKeyCode()){
 			case(KeyEvent.VK_W):
 				speed = 0;
-				break;
+				inTurn = false;
+			break;
 			case(KeyEvent.VK_A):
 				turn = 0;
-				break;
+				inTurn = false;
+			break;
 			case(KeyEvent.VK_D):
 				turn = 0;
-				break;
+				inTurn = false;
+			break;
 			}
 		}
+
 	}
 	
-	public void exploreMap(Point pointFront, Point pointLeft, Point pointRight){
-
-		
-		if (pointLeft != null && pointRight == null && pointFront != null){
-			speed = 0;
-			turn = -maxTurn;
-		}
-		else if (pointLeft == null && pointRight != null && pointFront != null){
-			speed = 0;
-			turn = maxTurn;
-		}
-		else if (pointRight!=null && pointLeft!=null && pointFront!=null){
-			speed = 0;
-			turn = maxTurn;
-		}
-		else if(pointFront==null && pointRight==null && pointLeft==null){	
-			turn = 0;
-			speed=maxSpeed;
-		}
-/*		else if (pointFront!=null)
+	private String exploreMap2(Point pointFront, Point pointLeft, Point pointRight, Point pointRight2, Point pointLeft2){
+		if (testPoint (pointFront,20))
 		{
-			if (pointMap.getFogMap().getUnknown(pointleft.x, pointleft.y))
+			if (testPoint (pointRight2, 20) && testPoint(pointLeft2, 20))
+			{	
+				speed = 0;
+				turn = maxTurn;
+				inTurn = true;
+				angleToTurn = Math.PI;
+			}
+			else if (!testPoint (pointRight2, 20) && testPoint(pointLeft2, 20))
+			{
+				speed = 0;
+				turn = -maxTurn;
+				inTurn = true;
+				angleToTurn = Math.PI/2;
+			}
+			else if (!testPoint (pointLeft2, 20) && testPoint(pointRight2, 20))
+			{
+				speed = 0;
+				turn = maxTurn;
+				inTurn = true;
+				angleToTurn = Math.PI/2;
+			}
+			else if (testPoint (pointLeft2, 20) && testPoint(pointRight2, 100))
+			{
+				speed = 0;
+				turn = -maxTurn;
+				inTurn = true;
+				angleToTurn = Math.PI/2;
+			}
+			else if (testPoint (pointRight2, 20) && testPoint(pointLeft2, 100))
+			{
+				speed = 0;
+				turn = maxTurn;
+				inTurn = true;
+				angleToTurn = Math.PI/2;
+			}
+
+			else
+			{
+
+				System.out.println (pointFront.dist);
+				if (pointLeft2 != null){
+					speed = 0;
+					turn = -maxTurn;
+					inTurn = true;
+					angleToTurn = Math.PI/2;
+					System.out.print (" " + pointLeft2.dist);}
+
+				if (pointRight2 != null){
+					speed = 0;
+					turn = maxTurn;
+					inTurn = true;
+					angleToTurn = Math.PI/2;
+					System.out.print(" " +pointRight2.dist);}
+				else if (pointRight2 == null && pointLeft2 == null)
+				{
+					speed = 0;
+					turn = -maxTurn;
+					inTurn = true;
+					angleToTurn = Math.PI/2;
+				}
+			}
+
+		}
+	
+	
+		else if (!(testPoint(pointFront, 20)))
+		{
+			if (testPoint (pointRight2, 12))
 			{
 				turn = maxTurn;
 			}
-			else if (pointMap.getFogMap().getUnknown(pointright.x, pointright.y))
+			else if (testPoint(pointLeft2 , 12))
 			{
 				turn = -maxTurn;
 			}
-			else
+			else if (testPoint (pointRight, 30))
 			{
 				turn = maxTurn;
 			}
-		}*/
-		else{
-			speed=maxSpeed;
+			else if (testPoint (pointLeft, 30))
+			{
+				turn = -maxTurn;
+			}
+			else{
+				turn = 0;
+				speed = maxSpeed;
+				if (pointFront != null)
+					System.out.println("clear " + pointFront.dist);
+			}
 		}
-
+		return "";
 	}
 
+	private String exploreMap(Point pointFront, Point pointLeft, Point pointRight, Point pointRight2, Point pointLeft2){	
+		if (!testPoint (pointFront, 30) && testPoint (pointLeft2, 30) && testPoint(pointRight2, 99)){
+			speed=maxSpeed;
+			return ("left, right?");
+		}
+		
+		else if ( !testPoint (pointFront,  30) && testPoint (pointRight2,  30) && testPoint(pointLeft2, 99)){
+			speed=maxSpeed;
+			return ("right, left?");
+		}
+		
+		else if(!testPoint(pointFront, 30) && !testPoint(pointRight2, 30) && !testPoint(pointLeft2, 30) ){
+			if(pointFront != null){
+				System.out.print(pointFront.dist);
+			}
+			System.out.println("clear " );
+			turn = 0;
+			speed=maxSpeed;
+			
+			/*if (testPoint (pointLeft2, 30) || testPoint (pointLeft, 40))
+			{
+				turn = maxTurn;
+			}
+			else if (testPoint (pointRight2, 30) || testPoint (pointLeft,40))
+			{
+				turn = -maxTurn;
+			}*/
+			return ("clear");
+		}
+		
+		else if (testPoint(pointFront,  30) && testPoint(pointRight2,  30) &&  !testPoint (pointLeft2, 30)){	
+			System.out.println("right,front");
+			speed = 0;
+			turn = -maxTurn;
+			inTurn = true;
+			angleToTurn = Math.PI/2;
+			return("right,front");
+		}
 
+		else if (testPoint (pointFront,  30)&& testPoint (pointLeft2,  30) && !testPoint (pointRight2, 30)){
+			System.out.println("left,front" );
+			speed = 0;
+			turn = maxTurn;
+			inTurn = true;
+			angleToTurn = Math.PI/2;
+			return("left,front" );
+		}
+		
+/*		else if ( testPoint (pointFront,  30) && testPoint (pointLeft2,  30) && testPoint(pointRight2, 99)){
+			System.out.println ("left,front, right?");
+			speed = 0;
+			turn = maxTurn;
+			inTurn = true;
+			angleToTurn = Math.PI/2;
+			return ("left,front, right?");
+		}*/
+
+/*		else if (testPoint(pointFront, 30) && testPoint(pointRight2,  30) && testPoint (pointLeft2, 99)){	
+			System.out.println("right,front, left?" );
+			speed = 0;
+			turn = -maxTurn;
+			inTurn = true;
+			angleToTurn = Math.PI/2;
+			return("right,front, left?" );
+		}
+		*/
+		else if(!testPoint(pointFront,  30) && testPoint(pointRight2,  30) && testPoint(pointLeft2,  30)){
+			System.out.println("corridor");
+			turn = 0;
+			speed=maxSpeed;
+	/*		if (testPoint (pointLeft2, 30) || testPoint (pointLeft, 40))
+			{
+				turn = maxTurn;
+			}
+			else if (testPoint (pointRight2, 30) || testPoint (pointLeft,40))
+			{
+				turn = -maxTurn;
+			}*/
+			return("corridor");
+		}
+
+		else if ( testPoint (pointFront ,  30) && testPoint (pointLeft2,  30) && testPoint (pointRight2,  30))
+		{
+			System.out.println("dead end");
+			speed = 0;
+			turn = -maxTurn;
+			inTurn = true;
+			angleToTurn = Math.PI;
+			return("dead end");
+		}
+
+		else if (testPoint (pointFront,  30))
+		{ 	System.out.println("front");
+			speed= 0;
+			turn = -maxTurn;
+			inTurn = true;
+			angleToTurn = Math.PI/2;
+			return("front");
+		}
+
+		else
+		{
+			System.out.println("unknown");
+			System.out.println(testPoint(pointLeft2, 30) + " " + testPoint(pointFront, 30) + " " + testPoint(pointRight, 30));
+			turn = 0;
+			speed= maxSpeed;
+			return ("unknown");
+		}
+	}
+	
+	private boolean testPoint (Point point, double dist)
+	{
+		return (point!= null && point.dist < dist);
+	}
 }
+
+
+
