@@ -171,6 +171,7 @@ public class Car {
 	}
 
 	public void update(int deltaTime){
+		hasMoved = false;
 
 		if(inTurn){
 			angleToTurn -= Math.abs(turn)*deltaTime;
@@ -266,7 +267,7 @@ public class Car {
 
 		//Create pos
 		world.pointMap.addPos(new Point((int)(posX-startX), (int)(posY-startY), 0, 0));
-		hasMoved = false;
+		
 	}
 	
 
