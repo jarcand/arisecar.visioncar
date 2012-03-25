@@ -49,7 +49,7 @@ public class PointMap {
 		g.setStroke(new BasicStroke(3));
 		for(Cell cell : pointData.getCellList()){
 			for(Point point : cell.getList()){
-				if(point.validity < 10){
+				if(point.validity < PointMapData.MinimumValidity){
 					g.setColor(Color.gray);
 					g.drawLine(point.x(), point.y(), point.x()+1, point.y());
 				}
@@ -58,7 +58,7 @@ public class PointMap {
 		
 		for(Cell cell : pointData.getCellList()){
 			for(Point point : cell.getList()){
-				if(point.validity >= 10){
+				if(point.validity >= PointMapData.MinimumValidity){
 					g.setColor(Color.green);
 					g.drawLine(point.x(), point.y(), point.x()+1, point.y());
 				}
@@ -66,7 +66,7 @@ public class PointMap {
 		}
 		
 		for(Point point : pointData.getCollisionList()){
-			if(point.validity < 10 && pointData.time-point.time < PointMapData.MinimumCollision){
+			if(point.validity < PointMapData.MinimumValidity && pointData.time-point.time < PointMapData.MinimumCollision){
 				g.setColor(Color.red);
 				g.drawLine(point.x(), point.y(), point.x()+1, point.y());
 			}

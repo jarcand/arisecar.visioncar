@@ -208,28 +208,30 @@ public class Car {
 		//but for our algorithm it's easier if we consider he is so we must  deduce the startX and startY for every point
 		//It is also essential for the point to draw at the right place.
 		if(hasMoved || true){
-			for(Sonde sonde : sondeList){
-				Point point = sonde.send();
-				if(sonde.getPos() == SondePos.Right){
-					pointRight = point;
-					/*					if (pointRight != null)
+			for(int i=0; i<3; i++){
+				for(Sonde sonde : sondeList){
+					Point point = sonde.send();
+					if(sonde.getPos() == SondePos.Right){
+						pointRight = point;
+						/*					if (pointRight != null)
 					System.out.println("right point " + pointRight.x + " " + pointRight.y);*/
-				}if (sonde.getPos() == SondePos.Right2){
-					pointRight2 = point;				
-				}if(sonde.getPos() == SondePos.Front){
-					pointFront = point;
-					/*					if (pointFront != null)
+					}if (sonde.getPos() == SondePos.Right2){
+						pointRight2 = point;				
+					}if(sonde.getPos() == SondePos.Front){
+						pointFront = point;
+						/*					if (pointFront != null)
 					System.out.println("front point " + pointFront.x + " " + pointFront.y);*/
-				}if(sonde.getPos() == SondePos.Left){
-					pointLeft = point;
-					/*if (pointLeft != null)
+					}if(sonde.getPos() == SondePos.Left){
+						pointLeft = point;
+						/*if (pointLeft != null)
 					System.out.println("left point " + pointLeft.x + " " + pointLeft.y);*/
-				}if (sonde.getPos() == SondePos.Left2){
-					pointLeft2 = point;
-				}
+					}if (sonde.getPos() == SondePos.Left2){
+						pointLeft2 = point;
+					}
 
-				if(point != null){
-					world.pointMap.addPoint(new Point(point.x-(int)startX, point.y-(int)startY, point.dist, point.angle+angleImperfection));
+					if(point != null){
+						world.pointMap.addPoint(new Point(point.x-(int)startX, point.y-(int)startY, point.dist, point.angle+angleImperfection));
+					}
 				}
 			}
 		}
