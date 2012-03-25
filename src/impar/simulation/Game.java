@@ -1,5 +1,6 @@
 package impar.simulation;
 
+import impar.realWorld.Car;
 import impar.realWorld.World;
 
 import java.awt.Graphics2D;
@@ -29,7 +30,41 @@ public class Game {
 	}
 	
 	public void keyEvent(KeyEvent e, KeyType type){
-		world.car.keyEvent(e, type);
+		if(type == KeyType.Pressed){
+			switch(e.getKeyCode()){
+			case(KeyEvent.VK_W):
+				world.car.setSpeed(Car.maxSpeed);
+				
+			break;
+			case(KeyEvent.VK_A):
+				world.car.setTurn(-Car.maxTurn);
+			break;
+			case(KeyEvent.VK_D):
+				world.car.setTurn(Car.maxTurn);
+			break;
+			case (KeyEvent.VK_SPACE):
+			{
+				world.car.setSpeed(0);
+				world.car.setTurn(0);
+				world.car.setExplore(!world.car.getExplore());
+			}
+			}
+		}else if(type == KeyType.Released){
+			switch(e.getKeyCode()){
+			case(KeyEvent.VK_W):
+				world.car.setSpeed(0);
+				world.car.setInTurn(false);
+			break;
+			case(KeyEvent.VK_A):
+				world.car.setTurn(0);
+				world.car.setInTurn(false);
+			break;
+			case(KeyEvent.VK_D):
+				world.car.setTurn(0);
+				world.car.setInTurn(false);
+			break;
+			}
+		}
 	}
 
 }

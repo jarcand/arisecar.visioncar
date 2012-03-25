@@ -29,6 +29,16 @@ public class Car {
 	 * A practical way to get access to everything that exist.
 	 */
 	private World world;
+	
+	/**
+	 * The class that make the robot move on its own.
+	 */
+	private Control control;
+	
+	/** The maximum speed at which we can move (in pixel). */
+	public static final double maxSpeed = 0.1;
+	/** The maximum speed at which we can turn (in radiant).  */
+	public static final double maxTurn = 0.005;
 
 	/** The current position of the robot */
 	private double posX;
@@ -52,10 +62,7 @@ public class Car {
 	 */
 	private double turn = 0;
 
-	/** The maximum speed at which we can move (in pixel). */
-	private double maxSpeed = 0.1;
-	/** The maximum speed at which we can turn (in radiant).  */
-	private double maxTurn = 0.005;
+	
 
 	/** The starting position of the robot. */
 	private double startX;
@@ -65,8 +72,6 @@ public class Car {
 
 	private ArrayList<Sonde> sondeList = new ArrayList<Sonde>();
 
-	private Random generator = new Random();
-
 	private boolean explore = false;
 
 	private boolean inTurn = false;
@@ -74,6 +79,8 @@ public class Car {
 
 	public Car(World world) {
 		this.world = world;
+		
+		this.control = new Control(this);
 
 		boolean placed = false;
 		for(int i=6; i<16; i++){
@@ -130,6 +137,20 @@ public class Car {
 	public double getRadius(){
 		return radius;
 	}
+	
+	public void setSpeed(double speed){
+		this.speed = speed;
+	}
+	
+	public void setTurn(double turn){
+		this.turn = turn;
+	}
+	
+	public boolean getExplore(){return explore;}
+	
+	public void setExplore(boolean explore){this.explore = explore;}
+	public void setInTurn(boolean inTurn){this.inTurn = inTurn;}
+	public void setAngleToTurn(double angleToTurn){this.angleToTurn = angleToTurn;}
 
 	public void draw(Graphics2D g){
 		g.setColor(Color.blue);
@@ -237,7 +258,7 @@ public class Car {
 		}
 
 		if (explore && !inTurn){
-			exploreMap2(pointFront, pointLeft, pointRight, pointRight2, pointLeft2);
+			control.exploreMap2(pointFront, pointLeft, pointRight, pointRight2, pointLeft2);
 		}
 
 
@@ -245,256 +266,8 @@ public class Car {
 		world.pointMap.addPos(new Point((int)(posX-startX), (int)(posY-startY), 0, 0));
 		hasMoved = false;
 	}
-
-	public void keyEvent(KeyEvent e, KeyType type){
-		if(type == KeyType.Pressed){
-			switch(e.getKeyCode()){
-			case(KeyEvent.VK_W):
-				speed = maxSpeed;
-				
-			break;
-			case(KeyEvent.VK_A):
-				turn = -maxTurn;
-			break;
-			case(KeyEvent.VK_D):
-				turn = maxTurn;
-			break;
-			case (KeyEvent.VK_SPACE):
-			{
-				speed = 0;
-				turn = 0;
-				explore = !explore;
-			}
-			}
-		}else if(type == KeyType.Released){
-			switch(e.getKeyCode()){
-			case(KeyEvent.VK_W):
-				speed = 0;
-				inTurn = false;
-			break;
-			case(KeyEvent.VK_A):
-				turn = 0;
-				inTurn = false;
-			break;
-			case(KeyEvent.VK_D):
-				turn = 0;
-				inTurn = false;
-			break;
-			}
-		}
-
-	}
 	
-	private String exploreMap2(Point pointFront, Point pointLeft, Point pointRight, Point pointRight2, Point pointLeft2){
-		if (testPoint (pointFront,20))
-		{
-			if (testPoint (pointRight2, 20) && testPoint(pointLeft2, 20))
-			{	
-				speed = 0;
-				turn = maxTurn;
-				inTurn = true;
-				angleToTurn = Math.PI;
-			}
-			else if (!testPoint (pointRight2, 20) && testPoint(pointLeft2, 20))
-			{
-				speed = 0;
-				turn = -maxTurn;
-				inTurn = true;
-				angleToTurn = Math.PI/2;
-			}
-			else if (!testPoint (pointLeft2, 20) && testPoint(pointRight2, 20))
-			{
-				speed = 0;
-				turn = maxTurn;
-				inTurn = true;
-				angleToTurn = Math.PI/2;
-			}
-			else if (testPoint (pointLeft2, 20) && testPoint(pointRight2, 100))
-			{
-				speed = 0;
-				turn = -maxTurn;
-				inTurn = true;
-				angleToTurn = Math.PI/2;
-			}
-			else if (testPoint (pointRight2, 20) && testPoint(pointLeft2, 100))
-			{
-				speed = 0;
-				turn = maxTurn;
-				inTurn = true;
-				angleToTurn = Math.PI/2;
-			}
 
-			else
-			{
-
-				System.out.println (pointFront.dist);
-				if (pointLeft2 != null){
-					speed = 0;
-					turn = -maxTurn;
-					inTurn = true;
-					angleToTurn = Math.PI/2;
-					System.out.print (" " + pointLeft2.dist);}
-
-				if (pointRight2 != null){
-					speed = 0;
-					turn = maxTurn;
-					inTurn = true;
-					angleToTurn = Math.PI/2;
-					System.out.print(" " +pointRight2.dist);}
-				else if (pointRight2 == null && pointLeft2 == null)
-				{
-					speed = 0;
-					turn = -maxTurn;
-					inTurn = true;
-					angleToTurn = Math.PI/2;
-				}
-			}
-
-		}
-	
-	
-		else if (!(testPoint(pointFront, 20)))
-		{
-			if (testPoint (pointRight2, 12))
-			{
-				turn = maxTurn;
-			}
-			else if (testPoint(pointLeft2 , 12))
-			{
-				turn = -maxTurn;
-			}
-			else if (testPoint (pointRight, 30))
-			{
-				turn = maxTurn;
-			}
-			else if (testPoint (pointLeft, 30))
-			{
-				turn = -maxTurn;
-			}
-			else{
-				turn = 0;
-				speed = maxSpeed;
-				if (pointFront != null)
-					System.out.println("clear " + pointFront.dist);
-			}
-		}
-		return "";
-	}
-
-	private String exploreMap(Point pointFront, Point pointLeft, Point pointRight, Point pointRight2, Point pointLeft2){	
-		if (!testPoint (pointFront, 30) && testPoint (pointLeft2, 30) && testPoint(pointRight2, 99)){
-			speed=maxSpeed;
-			return ("left, right?");
-		}
-		
-		else if ( !testPoint (pointFront,  30) && testPoint (pointRight2,  30) && testPoint(pointLeft2, 99)){
-			speed=maxSpeed;
-			return ("right, left?");
-		}
-		
-		else if(!testPoint(pointFront, 30) && !testPoint(pointRight2, 30) && !testPoint(pointLeft2, 30) ){
-			if(pointFront != null){
-				System.out.print(pointFront.dist);
-			}
-			System.out.println("clear " );
-			turn = 0;
-			speed=maxSpeed;
-			
-			/*if (testPoint (pointLeft2, 30) || testPoint (pointLeft, 40))
-			{
-				turn = maxTurn;
-			}
-			else if (testPoint (pointRight2, 30) || testPoint (pointLeft,40))
-			{
-				turn = -maxTurn;
-			}*/
-			return ("clear");
-		}
-		
-		else if (testPoint(pointFront,  30) && testPoint(pointRight2,  30) &&  !testPoint (pointLeft2, 30)){	
-			System.out.println("right,front");
-			speed = 0;
-			turn = -maxTurn;
-			inTurn = true;
-			angleToTurn = Math.PI/2;
-			return("right,front");
-		}
-
-		else if (testPoint (pointFront,  30)&& testPoint (pointLeft2,  30) && !testPoint (pointRight2, 30)){
-			System.out.println("left,front" );
-			speed = 0;
-			turn = maxTurn;
-			inTurn = true;
-			angleToTurn = Math.PI/2;
-			return("left,front" );
-		}
-		
-/*		else if ( testPoint (pointFront,  30) && testPoint (pointLeft2,  30) && testPoint(pointRight2, 99)){
-			System.out.println ("left,front, right?");
-			speed = 0;
-			turn = maxTurn;
-			inTurn = true;
-			angleToTurn = Math.PI/2;
-			return ("left,front, right?");
-		}*/
-
-/*		else if (testPoint(pointFront, 30) && testPoint(pointRight2,  30) && testPoint (pointLeft2, 99)){	
-			System.out.println("right,front, left?" );
-			speed = 0;
-			turn = -maxTurn;
-			inTurn = true;
-			angleToTurn = Math.PI/2;
-			return("right,front, left?" );
-		}
-		*/
-		else if(!testPoint(pointFront,  30) && testPoint(pointRight2,  30) && testPoint(pointLeft2,  30)){
-			System.out.println("corridor");
-			turn = 0;
-			speed=maxSpeed;
-	/*		if (testPoint (pointLeft2, 30) || testPoint (pointLeft, 40))
-			{
-				turn = maxTurn;
-			}
-			else if (testPoint (pointRight2, 30) || testPoint (pointLeft,40))
-			{
-				turn = -maxTurn;
-			}*/
-			return("corridor");
-		}
-
-		else if ( testPoint (pointFront ,  30) && testPoint (pointLeft2,  30) && testPoint (pointRight2,  30))
-		{
-			System.out.println("dead end");
-			speed = 0;
-			turn = -maxTurn;
-			inTurn = true;
-			angleToTurn = Math.PI;
-			return("dead end");
-		}
-
-		else if (testPoint (pointFront,  30))
-		{ 	System.out.println("front");
-			speed= 0;
-			turn = -maxTurn;
-			inTurn = true;
-			angleToTurn = Math.PI/2;
-			return("front");
-		}
-
-		else
-		{
-			System.out.println("unknown");
-			System.out.println(testPoint(pointLeft2, 30) + " " + testPoint(pointFront, 30) + " " + testPoint(pointRight, 30));
-			turn = 0;
-			speed= maxSpeed;
-			return ("unknown");
-		}
-	}
-	
-	private boolean testPoint (Point point, double dist)
-	{
-		return (point!= null && point.dist < dist);
-	}
 }
 
 
