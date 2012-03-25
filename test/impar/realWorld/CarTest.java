@@ -1,4 +1,4 @@
-package test.impar.realWorld;
+package impar.realWorld;
 
 import static org.junit.Assert.*;
 import org.junit.Test;

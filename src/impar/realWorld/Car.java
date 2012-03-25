@@ -3,7 +3,6 @@ package impar.realWorld;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 
@@ -11,8 +10,6 @@ import impar.pointMap.Point;
 import impar.pointMap.Sonde;
 import impar.pointMap.Sonde.SondePos;
 import impar.realWorld.Map.TypeEnum;
-import impar.simulation.Game.KeyType;
-import java.util.Random;
 
 /** 
  * That class represent the car in the real world. It gathers
@@ -24,6 +21,11 @@ import java.util.Random;
  *
  */
 public class Car {
+	
+	/** The maximum speed at which we can move (in pixel). */
+	public static final double maxSpeed = 0.1;
+	/** The maximum speed at which we can turn (in radiant).  */
+	public static final double maxTurn = 0.005;
 
 	/**
 	 * A practical way to get access to everything that exist.
@@ -35,47 +37,47 @@ public class Car {
 	 */
 	private Control control;
 	
-	/** The maximum speed at which we can move (in pixel). */
-	public static final double maxSpeed = 0.1;
-	/** The maximum speed at which we can turn (in radiant).  */
-	public static final double maxTurn = 0.005;
+	/**
+	 * The sonde gathering the information about the environment for the
+	 * robot.
+	 */
+	private ArrayList<Sonde> sondeList = new ArrayList<Sonde>();
+	
 
 	/** The current position of the robot */
-	private double posX;
-	private double posY;
+	double posX;
+	double posY;
 
 	/** The size of the robot */
-	private double radius = 10;
+	double radius = 10;
 
 	/** The direction the robot is facing (between 0 and 2*Math.PI) */
-	private double direction = 0;
+	double direction = 0;
 
 	/** 
 	 * The current speed of the robot. The speed change when you press
 	 * movement key.
 	 */
-	private double speed = 0;
+	double speed = 0;
 	/** Indicate in which direction the robot is currently turning.
 	 *  =0 = Don't turn
 	 *  >0 = Turn left
 	 *  <0 = Turn right
 	 */
-	private double turn = 0;
+	double turn = 0;
 
 	
 
 	/** The starting position of the robot. */
-	private double startX;
-	private double startY;
+	double startX;
+	double startY;
 
-	private boolean hasMoved = true;
+	boolean hasMoved = true;
 
-	private ArrayList<Sonde> sondeList = new ArrayList<Sonde>();
+	boolean explore = false;
 
-	private boolean explore = false;
-
-	private boolean inTurn = false;
-	private double angleToTurn = 0;
+	boolean inTurn = false;
+	double angleToTurn = 0;
 
 	public Car(World world) {
 		this.world = world;
