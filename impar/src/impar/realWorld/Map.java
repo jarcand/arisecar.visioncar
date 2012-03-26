@@ -4,9 +4,11 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStreamReader;
@@ -47,11 +49,11 @@ public class Map {
 	/**
 	 * The size of 1 square.
 	 */
-	public static final int size = 40;
+	public static final int size = 30;
 	/** 
 	 * The number of square 
 	 */
-	public static final int number = 16;
+	public static final int number = 21;
 	
 	/**
 	 * That's the map of all our square
@@ -72,42 +74,52 @@ public class Map {
 	 * directory and file name to access static maps
 	 */
 	//private String directory = "mapFile\\";
-	//private String filename = "mapfile";
+	private String filename = "mapfile.txt";
 	//File file = new File (directory);
 	
 	public Map(World world) {
+		this.world = world;
 		try{
-			int i =0;
-			 FileOutputStream fos = new FileOutputStream("mapfile.txt");
-			   OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8");
-			   out.write("This is the output file");
-			//FileInputStream fstream = new FileInputStream(directory + "\\" + filename);
-			//DataInputStream in = new DataInputStream(fstream);
-			//BufferedReader br = new BufferedReader (new InputStreamReader(in));
-			BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Bao Dang\\git\\arisecar.visioncar\\mapfile.txt"));
+/*			 FileOutputStream fos = new FileOutputStream("mapfile.txt");
+			 OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8");
+*/			 
+			FileInputStream fstream = new FileInputStream("mapfile.txt");
+			DataInputStream in = new DataInputStream(fstream);
+			BufferedReader br = new BufferedReader (new InputStreamReader(in));
+			//BufferedReader br = new BufferedReader(new FileReader("mapfile.txt"));
 			String strLine;
-
-			while ((strLine = br.readLine()) != null && i <=number)   {
+			
+			//int row=0;
+			for (int row = 0; row<number; row++) {
+				strLine = br.readLine();
 				char []mapLine = strLine.toCharArray();
-				for (int j=0; j<= number; j++)
+				for (int col=0; col< number; col++)
 				{
-					if (mapLine[j] == '#'){
-						map[i][j] = TypeEnum.wall;
-						i++;
+					
+					if (mapLine[col]=='#'){
+//						System.out.println(row + " " + col);
+						map[col][row] = TypeEnum.wall;
+						Rectangle rect = new Rectangle(col*size, row*size, size, size);
+						rectList.add(rect);
+					}
+					else if (mapLine[col] == '.'){
+//						System.out.println(row + " " + col);
+						map[col][row] = TypeEnum.empty;
 					}
 					else{
-						map[i][j] = TypeEnum.empty;
-						i++;
+						map [col][row]=TypeEnum.empty;
 					}
-						
+				
 				}
 			}
+			fstream.close();
+			br.close();
 			//Close the input stream
-			//in.close();
+			in.close();
 
 		}catch (Exception e){//Catch exception if any
 			System.err.println("No preloaded map " + e.getMessage());
-			this.world = world;
+			e.printStackTrace();
 			for(int i=0; i<number; i++){
 				for(int j=0; j<number; j++){
 					if(Math.random() < 0.30){
@@ -119,6 +131,32 @@ public class Map {
 					}
 				}
 			}
+			
+			try {
+				FileOutputStream fos = new FileOutputStream("mapfile.txt");
+				OutputStreamWriter outStream = new OutputStreamWriter(fos, "UTF-8");
+				BufferedWriter out = new BufferedWriter(outStream);
+				for (int i = 0; i < number; i++)
+				{
+					for (int j = 0; j< number; j++)
+					{
+						if (map[i][j] == TypeEnum.wall){
+							out.append('#');
+						}
+						else
+						{
+							out.append('.');
+						}
+						
+					}
+					out.newLine();
+				}
+				out.close(); fos.close(); outStream.close();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
 		}
 
 	}
