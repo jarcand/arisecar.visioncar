@@ -3,6 +3,7 @@ package impar.pointMap;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
+import impar.realWorld.Car;
 import impar.realWorld.Map;
 import impar.realWorld.World;
 
@@ -17,6 +18,11 @@ public class Sonde {
 	 * A practical way to get access to everything that exist.
 	 */
 	private World world;
+	
+	/**
+	 * The car associated with this sonde
+	 */
+	private Car car;
 	
 	/**
 	 * The angle at which this sonde is facing relatively to the angle the front
@@ -36,8 +42,9 @@ public class Sonde {
 	SondePos pos;
 	
 	
-	public Sonde(World world, double angle, SondePos pos){
+	public Sonde(World world, Car car, double angle, SondePos pos){
 		this.world = world;
+		this.car = car;
 		this.relativeAngle = angle;
 		this.pos = pos;
 	}
@@ -59,9 +66,9 @@ public class Sonde {
 		ArrayList<Rectangle> rectList = world.map.getRectList();
 		FogMap fogMap = world.fogMap;
 		
-		double x = world.car.getPosX();
-		double y = world.car.getPosY();
-		double angle = world.car.getAngle() + relativeAngle;
+		double x = car.getPosX();
+		double y = car.getPosY();
+		double angle = car.getAngle() + relativeAngle;
 		
 		boolean collide = false;
 		while(!collide){
@@ -86,8 +93,8 @@ public class Sonde {
 			
 			//Fog discovery
 			if(!collide){
-				double fogX = nx-world.car.getStartX();
-				double fogY = ny-world.car.getStartY();
+				double fogX = nx-car.getStartX();
+				double fogY = ny-car.getStartY();
 				
 				
 				

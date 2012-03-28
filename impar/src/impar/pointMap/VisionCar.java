@@ -1,5 +1,6 @@
 package impar.pointMap;
 
+import impar.realWorld.Car;
 import impar.realWorld.World;
 
 import java.awt.BasicStroke;
@@ -22,24 +23,24 @@ import java.awt.Graphics2D;
 public class VisionCar {
 	
 	/**
-	 * A practical way to get access to everything that exist.
+	 * The car associated with this virtual representation
 	 */
-	private World world;
+	private final Car car;
 	
-	public VisionCar(World world){
-		this.world = world;
+	public VisionCar(Car car){
+		this.car = car;
 	}
 	
 	public double getPosX(){
-		return world.car.getPosX()-world.car.getStartX();
+		return car.getPosX()-car.getStartX();
 	}
 	
 	public double getPosY(){
-		return world.car.getPosY()-world.car.getStartY();
+		return car.getPosY()-car.getStartY();
 	}
 	
 	public double getRadius(){
-		return world.car.getRadius();
+		return car.getRadius();
 	}
 	
 	public void draw(Graphics2D g){
@@ -55,8 +56,8 @@ public class VisionCar {
 		g.setColor(Color.pink);
 		x = (int) (getPosX());
 		y = (int) (getPosY());
-		int dirX = (int) (getRadius()*Math.cos(world.car.getAngle()));
-		int dirY = (int) (getRadius()*Math.sin(world.car.getAngle()));
+		int dirX = (int) (getRadius()*Math.cos(car.getAngle()));
+		int dirY = (int) (getRadius()*Math.sin(car.getAngle()));
 		g.drawLine(x, y, x+dirX, y+dirY);
 	}
 

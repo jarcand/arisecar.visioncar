@@ -49,11 +49,11 @@ public class Map {
 	/**
 	 * The size of 1 square.
 	 */
-	public static final int size = 30;
+	public static final int size = 40;
 	/** 
 	 * The number of square 
 	 */
-	public static final int number = 21;
+	public static final int number = 16;
 	
 	/**
 	 * That's the map of all our square
@@ -208,6 +208,7 @@ public class Map {
 		}
 		
 		world.car.draw(g);
+		world.car2.draw(g);
 		g.translate(-10, -10);
 		
 	}

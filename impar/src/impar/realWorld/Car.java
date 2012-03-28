@@ -7,7 +7,9 @@ import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 
 import impar.pointMap.Point;
+import impar.pointMap.PointMap;
 import impar.pointMap.Sonde;
+import impar.pointMap.VisionCar;
 import impar.pointMap.Sonde.SondePos;
 import impar.realWorld.Map.TypeEnum;
 
@@ -36,6 +38,16 @@ public class Car {
 	 * The class that make the robot move on its own.
 	 */
 	private Control control;
+	
+	/**
+	 * The vision the car has of itself
+	 */
+	public final VisionCar visionCar;
+	
+	/**
+	 * The information the car has about it's environnement
+	 */
+	public final PointMap pointMap;
 	
 	/**
 	 * The sonde gathering the information about the environment for the
@@ -80,7 +92,11 @@ public class Car {
 	double angleToTurn = 0;
 
 	public Car(World world) {
+		System.out.println("New car");
 		this.world = world;
+		
+		this.visionCar = new VisionCar(this);
+		this.pointMap = new PointMap(this);
 		
 		this.control = new Control(this);
 
@@ -98,19 +114,19 @@ public class Car {
 			}
 		}
 
-		Sonde sonde = new Sonde(world, 0, SondePos.Front);
+		Sonde sonde = new Sonde(world, this, 0, SondePos.Front);
 		sondeList.add(sonde);
-		sonde = new Sonde(world, Math.PI/2, SondePos.Left2);
+		sonde = new Sonde(world, this, Math.PI/2, SondePos.Left2);
 		sondeList.add(sonde);
-		sonde = new Sonde(world, -Math.PI/2, SondePos.Right2);
+		sonde = new Sonde(world, this, -Math.PI/2, SondePos.Right2);
 		sondeList.add(sonde);
-		sonde = new Sonde(world, Math.PI/6, SondePos.Left);
+		sonde = new Sonde(world, this, Math.PI/6, SondePos.Left);
 		sondeList.add(sonde);
-		sonde = new Sonde(world, -Math.PI/6, SondePos.Right);
+		sonde = new Sonde(world, this, -Math.PI/6, SondePos.Right);
 		sondeList.add(sonde);
-		sonde = new Sonde(world, Math.PI/3, SondePos.None);
+		sonde = new Sonde(world, this, Math.PI/3, SondePos.None);
 		sondeList.add(sonde);
-		sonde = new Sonde(world, -Math.PI/3, SondePos.None);
+		sonde = new Sonde(world, this, -Math.PI/3, SondePos.None);
 		sondeList.add(sonde);
 
 
@@ -196,6 +212,7 @@ public class Car {
 				|| newPosY - radius < 0
 				|| newPosY + radius > Map.size * Map.number) {
 			keepInside = true;
+			control.contact();
 		}
 
 		//Check for collision
@@ -207,6 +224,7 @@ public class Car {
 			for(Rectangle rect : world.map.getRectList()){
 				if(circle.intersects(rect)){
 					noIntersect = false;
+					control.contact();
 					break;
 				}
 			}	
@@ -254,7 +272,7 @@ public class Car {
 					}
 
 					if(point != null){
-						world.pointMap.addPoint(new Point(point.x-(int)startX, point.y-(int)startY, point.dist, point.angle+angleImperfection));
+						pointMap.addPoint(new Point(point.x-(int)startX, point.y-(int)startY, point.dist, point.angle+angleImperfection));
 					}
 				}
 			}
@@ -266,7 +284,7 @@ public class Car {
 
 
 		//Create pos
-		world.pointMap.addPos(new Point((int)(posX-startX), (int)(posY-startY), 0, 0));
+		pointMap.addPos(new Point((int)(posX-startX), (int)(posY-startY), 0, 0));
 		
 	}
 	

@@ -21,12 +21,15 @@ public class Game {
 	public void draw(Graphics2D g) {
 		//The map is drawing the car too
 		world.map.draw(g);
-		world.pointMap.draw(g);
+		world.car.pointMap.draw(g);
+		world.car2.pointMap.draw(g);
 	}
 	
 	public void update(int deltaTime){
-		world.pointMap.update(deltaTime);
+		world.car.pointMap.update(deltaTime);
+		world.car2.pointMap.update(deltaTime);
 		world.car.update(deltaTime);
+		world.car2.update(deltaTime);
 	}
 	
 	public void keyEvent(KeyEvent e, KeyType type){
@@ -47,6 +50,9 @@ public class Game {
 				world.car.setSpeed(0);
 				world.car.setTurn(0);
 				world.car.setExplore(!world.car.getExplore());
+				world.car2.setSpeed(0);
+				world.car2.setTurn(0);
+				world.car2.setExplore(!world.car2.getExplore());
 			}
 			}
 		}else if(type == KeyType.Released){

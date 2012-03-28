@@ -31,17 +31,15 @@ import impar.pointMap.VisionCar;
  */
 public class World {
 	
-	public final PointMap pointMap;
 	public final Map map;
 	public final Car car;
-	public final VisionCar visionCar;
+	public final Car car2;
 	public final FogMap fogMap;
 	
 	public World(){
-		pointMap = new PointMap(this);
 		map = new Map(this);
 		car = new Car(this);
-		visionCar = new VisionCar(this);
+		car2 = new Car(this);
 		fogMap = new FogMap(this);
 	}
 

@@ -17,6 +17,10 @@ public class Control {
 		return (point!= null && point.dist < dist);
 	}
 	
+	public void contact(){
+		
+	}
+	
 	public String exploreMap2(Point pointFront, Point pointLeft, Point pointRight, Point pointRight2, Point pointLeft2){
 		if (testPoint (pointFront,20))
 		{

@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import impar.pointMap.PointMapData.Cell;
+import impar.realWorld.Car;
 import impar.realWorld.World;
 
 /**
@@ -23,17 +24,19 @@ import impar.realWorld.World;
  */
 public class PointMap {
 	
+	
 	/**
-	 * A practical way to get access to everything that exist.
+	 * The car to which this map is associated
 	 */
-	private World world;
+	private Car car;
 	
 	private ArrayList<Point> posList = new ArrayList<Point>();
 	
 	private PointMapData pointData = new PointMapData();
 	
-	public PointMap(World world){
-		this.world = world;
+	public PointMap(Car car){
+		System.out.println("PointMap");
+		this.car = car;
 	}
 	
 	public void draw(Graphics2D g){
@@ -43,7 +46,7 @@ public class PointMap {
 		g.translate(660*1.5, 660*0.5);
 		
 		//Draw fog of war
-		world.fogMap.draw(g);
+		//world.fogMap.draw(g);
 		
 		//Draw wall
 		g.setStroke(new BasicStroke(3));
@@ -79,7 +82,8 @@ public class PointMap {
 		}
 		
 		//Draw car
-		world.visionCar.draw(g);
+		car.visionCar.draw(g);
+		g.translate(-660*1.5, -660*0.5);
 	}
 	
 	/**
