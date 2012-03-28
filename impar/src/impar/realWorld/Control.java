@@ -18,8 +18,12 @@ public class Control {
 	}
 	
 	public void contact(){
-		
+			car.setTurn(Car.maxTurn);
+			car.setInTurn(true);
+			car.setAngleToTurn(Math.PI/3);	
 	}
+		
+	
 	
 	public String exploreMap2(Point pointFront, Point pointLeft, Point pointRight, Point pointRight2, Point pointLeft2){
 		if (testPoint (pointFront,20))
