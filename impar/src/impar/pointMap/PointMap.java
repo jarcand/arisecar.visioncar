@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import impar.pointMap.PointMapData.Cell;
 import impar.realWorld.Car;
+import impar.realWorld.Map;
 import impar.realWorld.World;
 
 /**
@@ -43,7 +44,10 @@ public class PointMap {
 		
 		//Move the point map to the side of the ''real'' map.
 		//Since the car initially think he is at position 0, we want to begin the drawing in the middle.
-		g.translate(660*0.5, 660*0.5);
+		double scale = 0.8;
+		double trans = Map.size*Map.number;
+		g.scale(scale, scale);
+		g.translate(trans*0.5, trans*0.5);
 		
 		//Draw fog of war
 		//world.fogMap.draw(g);
@@ -83,7 +87,9 @@ public class PointMap {
 		
 		//Draw car
 		car.visionCar.draw(g);
-		g.translate(-660*0.5, -660*0.5);
+		
+		g.translate(-trans*0.5, -trans*0.5);
+		g.scale(1/scale, 1/scale);
 	}
 	
 	/**
