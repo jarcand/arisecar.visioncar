@@ -73,17 +73,18 @@ public class Map {
 	/**
 	 * directory and file name to access static maps
 	 */
-	//private String directory = "mapFile\\";
+	private String directory = "\\impar\\MapFile\\";
 	private String filename = "mapfile.txt";
-	//File file = new File (directory);
+	File file = new File ("mapfile.txt");
 	
 	public Map(World world) {
+		directory = file.getParent() + directory;
 		this.world = world;
 		try{
 /*			 FileOutputStream fos = new FileOutputStream("mapfile.txt");
 			 OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8");
 */			 
-			FileInputStream fstream = new FileInputStream("mapfile.txt");
+			FileInputStream fstream = new FileInputStream(directory + filename);
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader (new InputStreamReader(in));
 			//BufferedReader br = new BufferedReader(new FileReader("mapfile.txt"));
