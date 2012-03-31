@@ -20,7 +20,7 @@ public class BasicApplet extends Applet implements Runnable, ChangeListener{
 	private static final long serialVersionUID = 5735138575810621548L;
 	
 	//Set the size in the parameter when launching the applet
-	private final int width = 480*2+330;
+	private final int width = 480*1+330;
 	private final int height = 330+330;
 
 	Canvas canvas;

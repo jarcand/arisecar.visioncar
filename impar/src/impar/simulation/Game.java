@@ -21,10 +21,13 @@ public class Game {
 	
 	public synchronized void draw(Graphics2D g) {
 		//The map is drawing the car too
-		world.map.draw(g);
+		
 		for(Car car : world.carList){
 			car.pointMap.draw(g);
 		}
+		
+		world.map.draw(g);
+		
 	}
 	
 	public synchronized void update(int deltaTime){

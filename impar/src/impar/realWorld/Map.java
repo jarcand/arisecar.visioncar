@@ -191,7 +191,10 @@ public class Map {
 	 * @param g
 	 */
 	public void draw(Graphics2D g){
-		g.translate(800, 10);
+		double scale = 0.3;
+		double trans = 600;
+		g.scale(scale, scale);
+		g.translate(trans/scale, 10);
 		g.setColor(Color.gray);
 		//Draw the edge of the map
 		g.fillRect(-10, -10, number*size+20, number*size+20);
@@ -211,7 +214,8 @@ public class Map {
 		for(Car car : world.carList){
 			car.draw(g);
 		}
-		g.translate(-800, -10);
+		g.translate(-trans/scale, -10);
+		g.scale(1/scale, 1/scale);
 		
 	}
 
