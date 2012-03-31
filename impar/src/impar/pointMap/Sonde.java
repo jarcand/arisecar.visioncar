@@ -42,6 +42,12 @@ public class Sonde {
 	SondePos pos;
 	
 	
+	/**
+	 * Precision of the Sensor
+	 */
+	private static double imperfection = 0.50;
+	
+	
 	public Sonde(World world, Car car, double angle, SondePos pos){
 		this.world = world;
 		this.car = car;
@@ -60,7 +66,6 @@ public class Sonde {
 	public Point send(){
 
 		double maxDist = 100;
-		double imperfection = 0.50;
 		double dist = 0;
 		
 		ArrayList<Rectangle> rectList = world.map.getRectList();
@@ -120,6 +125,10 @@ public class Sonde {
 		double imparDist = dist*imparValue;
 		
 		return (new Point((int)x, (int)y, imparDist, angle));
+	}
+
+	public static void setPrecision(int prc) {
+		imperfection = prc/100;		
 	}
 
 }

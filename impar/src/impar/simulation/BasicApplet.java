@@ -8,20 +8,26 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.image.BufferStrategy;
 
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import impar.simulation.Game.KeyType;
 
 
-public class BasicApplet extends Applet implements Runnable{
+public class BasicApplet extends Applet implements Runnable, ChangeListener{
 	
 	private static final long serialVersionUID = 5735138575810621548L;
 	
 	//Set the size in the parameter when launching the applet
-	private final int width = 660*2+330;
-	private final int height = 660+330;
+	private final int width = 480*2+330;
+	private final int height = 330+330;
 
 	Canvas canvas;
 	BufferStrategy bufferStrategy;
 	Thread gameloopThread;
+	JSlider precision = new JSlider(JSlider.VERTICAL);
+	
 	
 	Game game;
 	
@@ -41,6 +47,11 @@ public class BasicApplet extends Applet implements Runnable{
 		canvas.addMouseListener(new MouseControl());
 		canvas.addMouseMotionListener(new MouseControl());
 		canvas.requestFocus();
+		
+		precision.addChangeListener(this);
+		add(precision);
+		
+		
 	}
 	
 	@Override
@@ -75,6 +86,14 @@ public class BasicApplet extends Applet implements Runnable{
 	
 	private class MouseControl extends MouseAdapter{
 		
+	}
+	
+	public void stateChanged(ChangeEvent e) {
+		JSlider source = (JSlider)e.getSource();
+		if (!source.getValueIsAdjusting()) {
+			int precision = (int)source.getValue();
+			game.setPrecision(precision);
+		}
 	}
 	
 	private long desiredFPS = 60;

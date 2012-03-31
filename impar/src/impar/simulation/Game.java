@@ -32,6 +32,12 @@ public class Game {
 		world.car2.update(deltaTime);
 	}
 	
+	public void setPrecision(int prc)
+	{
+		world.car.setPrecision(prc);
+		world.car2.setPrecision(prc);
+	}
+	
 	public void keyEvent(KeyEvent e, KeyType type){
 		if(type == KeyType.Pressed){
 			switch(e.getKeyCode()){

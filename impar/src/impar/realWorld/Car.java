@@ -287,6 +287,11 @@ public class Car {
 		pointMap.addPos(new Point((int)(posX-startX), (int)(posY-startY), 0, 0));
 		
 	}
+
+	public void setPrecision(int prc) {
+		Sonde.setPrecision(prc);
+		
+	}
 	
 
 }
