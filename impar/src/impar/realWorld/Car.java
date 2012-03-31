@@ -86,7 +86,7 @@ public class Car {
 
 	boolean hasMoved = true;
 
-	boolean explore = false;
+	static boolean explore = false;
 
 	boolean inTurn = false;
 	double angleToTurn = 0;
@@ -99,6 +99,8 @@ public class Car {
 		this.pointMap = new PointMap(this);
 		
 		this.control = new Control(this);
+		
+		direction = Math.random()*(2*Math.PI);
 
 		boolean placed = false;
 		for(int i=6; i<16; i++){
@@ -164,9 +166,9 @@ public class Car {
 		this.turn = turn;
 	}
 	
-	public boolean getExplore(){return explore;}
+	public static boolean getExplore(){return explore;}
 	
-	public void setExplore(boolean explore){this.explore = explore;}
+	public static void setExplore(boolean explore){Car.explore = explore;}
 	public void setInTurn(boolean inTurn){this.inTurn = inTurn;}
 	public void setAngleToTurn(double angleToTurn){this.angleToTurn = angleToTurn;}
 
@@ -285,11 +287,6 @@ public class Car {
 
 		//Create pos
 		pointMap.addPos(new Point((int)(posX-startX), (int)(posY-startY), 0, 0));
-		
-	}
-
-	public void setPrecision(int prc) {
-		Sonde.setPrecision(prc);
 		
 	}
 	

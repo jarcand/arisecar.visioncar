@@ -1,5 +1,6 @@
 package impar.simulation;
 
+import impar.pointMap.Sonde;
 import impar.realWorld.Car;
 import impar.realWorld.World;
 
@@ -18,63 +19,74 @@ public class Game {
 		world = new World();
 	}
 	
-	public void draw(Graphics2D g) {
+	public synchronized void draw(Graphics2D g) {
 		//The map is drawing the car too
 		world.map.draw(g);
-		world.car.pointMap.draw(g);
-		world.car2.pointMap.draw(g);
+		for(Car car : world.carList){
+			car.pointMap.draw(g);
+		}
 	}
 	
-	public void update(int deltaTime){
-		world.car.pointMap.update(deltaTime);
-		world.car2.pointMap.update(deltaTime);
-		world.car.update(deltaTime);
-		world.car2.update(deltaTime);
+	public synchronized void update(int deltaTime){
+		for(Car car : world.carList){
+			car.pointMap.update(deltaTime);
+		}
+		for(Car car : world.carList){
+			car.update(deltaTime);
+		}
 	}
 	
 	public void setPrecision(int prc)
 	{
-		world.car.setPrecision(prc);
-		world.car2.setPrecision(prc);
+		Sonde.setPrecision(prc);
 	}
 	
-	public void keyEvent(KeyEvent e, KeyType type){
-		if(type == KeyType.Pressed){
-			switch(e.getKeyCode()){
-			case(KeyEvent.VK_W):
-				world.car.setSpeed(Car.maxSpeed);
+	public synchronized void keyEvent(KeyEvent e, KeyType type){
+		if(e.getKeyCode() == KeyEvent.VK_ENTER && type == KeyType.Released){
+			world.carList.add(new Car(world));
+		}else if(e.getKeyCode() == KeyEvent.VK_SPACE && type == KeyType.Released){
+			for(Car car : world.carList){
+				car.setSpeed(0);
+				car.setTurn(0);
+				car.setInTurn(false);
+			}
+			Car.setExplore(!Car.getExplore());
+		}
+		
+		for(Car car : world.carList){
+			if(type == KeyType.Pressed){
+				switch(e.getKeyCode()){
+				case(KeyEvent.VK_W):
+					car.setSpeed(Car.maxSpeed);
+
+				break;
+				case(KeyEvent.VK_A):
+					car.setTurn(-Car.maxTurn);
+				break;
+				case(KeyEvent.VK_D):
+					car.setTurn(Car.maxTurn);
+				break;
 				
-			break;
-			case(KeyEvent.VK_A):
-				world.car.setTurn(-Car.maxTurn);
-			break;
-			case(KeyEvent.VK_D):
-				world.car.setTurn(Car.maxTurn);
-			break;
-			case (KeyEvent.VK_SPACE):
-			{
-				world.car.setSpeed(0);
-				world.car.setTurn(0);
-				world.car.setExplore(!world.car.getExplore());
-				world.car2.setSpeed(0);
-				world.car2.setTurn(0);
-				world.car2.setExplore(!world.car2.getExplore());
-			}
-			}
-		}else if(type == KeyType.Released){
-			switch(e.getKeyCode()){
-			case(KeyEvent.VK_W):
-				world.car.setSpeed(0);
-				world.car.setInTurn(false);
-			break;
-			case(KeyEvent.VK_A):
-				world.car.setTurn(0);
-				world.car.setInTurn(false);
-			break;
-			case(KeyEvent.VK_D):
-				world.car.setTurn(0);
-				world.car.setInTurn(false);
-			break;
+				
+					
+				}
+			}else if(type == KeyType.Released){
+				switch(e.getKeyCode()){
+				case(KeyEvent.VK_W):
+					car.setSpeed(0);
+					car.setInTurn(false);
+				break;
+				case(KeyEvent.VK_A):
+					car.setTurn(0);
+					car.setInTurn(false);
+				break;
+				case(KeyEvent.VK_D):
+					car.setTurn(0);
+					car.setInTurn(false);
+				break;
+				
+				
+				}
 			}
 		}
 	}

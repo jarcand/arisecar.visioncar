@@ -43,7 +43,7 @@ public class PointMap {
 		
 		//Move the point map to the side of the ''real'' map.
 		//Since the car initially think he is at position 0, we want to begin the drawing in the middle.
-		g.translate(660*1.5, 660*0.5);
+		g.translate(660*0.5, 660*0.5);
 		
 		//Draw fog of war
 		//world.fogMap.draw(g);
@@ -83,7 +83,7 @@ public class PointMap {
 		
 		//Draw car
 		car.visionCar.draw(g);
-		g.translate(-660*1.5, -660*0.5);
+		g.translate(-660*0.5, -660*0.5);
 	}
 	
 	/**

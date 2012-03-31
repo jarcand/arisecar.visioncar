@@ -190,7 +190,7 @@ public class Map {
 	 * @param g
 	 */
 	public void draw(Graphics2D g){
-		g.translate(10, 10);
+		g.translate(800, 10);
 		g.setColor(Color.gray);
 		//Draw the edge of the map
 		g.fillRect(-10, -10, number*size+20, number*size+20);
@@ -207,9 +207,10 @@ public class Map {
 			}
 		}
 		
-		world.car.draw(g);
-		world.car2.draw(g);
-		g.translate(-10, -10);
+		for(Car car : world.carList){
+			car.draw(g);
+		}
+		g.translate(-800, -10);
 		
 	}
 

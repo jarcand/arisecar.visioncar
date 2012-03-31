@@ -1,5 +1,7 @@
 package impar.realWorld;
 
+import java.util.ArrayList;
+
 import impar.pointMap.FogMap;
 import impar.pointMap.PointMap;
 import impar.pointMap.VisionCar;
@@ -33,13 +35,13 @@ public class World {
 	
 	public final Map map;
 	public final Car car;
-	public final Car car2;
+	public final ArrayList<Car> carList = new ArrayList<Car>();
 	public final FogMap fogMap;
 	
 	public World(){
 		map = new Map(this);
 		car = new Car(this);
-		car2 = new Car(this);
+		carList.add(car);
 		fogMap = new FogMap(this);
 	}
 
