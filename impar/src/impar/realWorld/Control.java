@@ -67,20 +67,22 @@ public class Control {
 			else
 			{
 
-				System.out.println (pointFront.dist);
+//				System.out.println (pointFront.dist);
 				if (pointLeft2 != null){
 					car.setSpeed(0);
 					car.setTurn(-Car.maxTurn);
 					car.setInTurn(true);
 					car.setAngleToTurn(Math.PI/2);
-					System.out.print (" " + pointLeft2.dist);}
+//					System.out.print (" " + pointLeft2.dist);
 
+				}
 				if (pointRight2 != null){
 					car.setSpeed(0);
 					car.setTurn(Car.maxTurn);
 					car.setInTurn(true);
 					car.setAngleToTurn(Math.PI/2);
-					System.out.print(" " +pointRight2.dist);}
+//					System.out.print(" " +pointRight2.dist);
+				}
 				else if (pointRight2 == null && pointLeft2 == null)
 				{
 					car.setSpeed(0);
@@ -114,8 +116,8 @@ public class Control {
 			else{
 				car.setTurn(0);
 				car.setSpeed(Car.maxSpeed);
-				if (pointFront != null)
-					System.out.println("clear " + pointFront.dist);
+//				if (pointFront != null)
+//					System.out.println("clear " + pointFront.dist);
 			}
 		}
 		return "";
