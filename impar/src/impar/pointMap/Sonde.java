@@ -45,7 +45,7 @@ public class Sonde {
 	/**
 	 * Precision of the Sensor
 	 */
-	private static double imperfection = 0.50;
+	public static double imperfection = 0.50;
 	
 	
 	public Sonde(World world, Car car, double angle, SondePos pos){

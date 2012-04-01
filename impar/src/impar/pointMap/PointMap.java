@@ -31,9 +31,9 @@ public class PointMap {
 	 */
 	private Car car;
 	
-	private ArrayList<Point> posList = new ArrayList<Point>();
+	ArrayList<Point> posList = new ArrayList<Point>();
 	
-	private PointMapData pointData = new PointMapData();
+	PointMapData pointData = new PointMapData();
 	
 	public PointMap(Car car){
 		System.out.println("PointMap");
