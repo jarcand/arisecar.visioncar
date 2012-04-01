@@ -1,6 +1,7 @@
 package impar.realWorld;
 
 import static org.junit.Assert.*;
+import impar.realWorld.Map.TypeEnum;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -27,8 +28,13 @@ public class MapTest {
 	}
 
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void getTest() {
+		World world = new World();
+		Map map = new Map(world);
+
+		System.out.println(map.get(0, 0));
+		assertEquals(map.get(0, 0) == TypeEnum.wall, true);
+
 	}
 
 }
